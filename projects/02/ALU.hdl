@@ -26,6 +26,7 @@
 // if (out == 0) set zr = 1
 // if (out < 0) set ng = 1
 
+
 CHIP ALU {
     IN  
         x[16], y[16],  // 16-bit inputs        
@@ -42,5 +43,28 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+	
+    // Zero x and y inputs
+	Mux16 (a=x, b=false, sel=zx, out=xzeroed);
+	Mux16 (a=y, b=false, sel=zy, out=yzeroed);
+	
+	// Negate zeroed x input
+	Not16 (in=xzeroed, out=xtempnegated);
+	Mux16 (a=xzeroed, b=xtempnegated, sel=nx, out=xnegated);
+
+	// Negate zeroed y input
+	Not16 (in=yzeroed, out=ytempnegated);
+	Mux16 (a=yzeroed, b=ytempnegated, sel=ny, out=ynegated);
+
+	// And or Add
+	And16 (a=xnegated, b=ynegated, out=tempand);
+	Add16 (a=xnegated, b=ynegated, out=tempadd);
+	Mux16 (a=tempand, b=tempadd, sel=f, out=andoradd);
+	
+	// Negate output; pass most significant digit to 'is negative' output.
+	Not16 (in=andoradd, out=tempnegated);
+	Mux16 (a=andoradd, b=tempnegated, sel=no, out=out, out[15]=ng, out=tempout);
+	
+	// Return whether the result is zero.
+	IsZero (in=tempout, out=zr);
 }
