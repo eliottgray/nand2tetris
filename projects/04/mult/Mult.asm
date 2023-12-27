@@ -9,4 +9,33 @@
 // This program only needs to handle arguments that satisfy
 // R0 >= 0, R1 >= 0, and R0*R1 < 32768.
 
-// Put your code here.
+@R2 // Product
+M=0
+@loopcount
+M=0
+
+(LOOPSTART)
+
+// Since we are adding R0, R1 shall be used as the required number of loops.
+@loopcount
+D=M
+@R1
+D=M-D // Current loops = Required Loops - Loopcount.
+@LOOPEND
+D;JEQ
+
+// Add R0 to product.
+@R0
+D=M
+@R2
+M=D+M
+
+// Track exit condition.
+@loopcount
+M=M+1
+
+// Back to the start of the loop.
+@LOOPSTART
+0;JMP
+
+(LOOPEND)
