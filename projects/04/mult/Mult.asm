@@ -9,6 +9,7 @@
 // This program only needs to handle arguments that satisfy
 // R0 >= 0, R1 >= 0, and R0*R1 < 32768.
 
+// Start by explicitly zero-ing out the product and loopcount memory locations.
 @R2 // Product
 M=0
 @loopcount
@@ -20,9 +21,9 @@ M=0
 @loopcount
 D=M
 @R1
-D=M-D // Current loops = Required Loops - Loopcount.
+D=M-D // Remaining Loops = Required Loops - Loopcount.
 @LOOPEND
-D;JEQ
+D;JEQ // If remaining loops == 0, jump to the end.
 
 // Add R0 to product.
 @R0
