@@ -11,13 +11,14 @@
 // "white" in every pixel;
 // the screen should remain fully clear as long as no key is pressed.
 
-@RESTART
-0;JMP
-
 (MAIN)
-
+// Start of screen refresh loop.
 @SCREENCOLOR
 M=0
+@SCREEN
+D=A
+@SCREENWORD
+M=D
 @KBD
 D=M
 @SETBLACK
@@ -30,7 +31,7 @@ D;JNE // If Keyboard is not "0", set screencolor to black.
 D=M
 @24576
 D=D-A
-@RESTART
+@MAIN
 D;JGE
 
 // Since we haven't completed the whole screen, blacken the current word
@@ -53,18 +54,4 @@ M=M+1
 @SCREENCOLOR
 M=!M // Because we pre-set SCREENCOLOR=0, we can just flip the bits from all-0 to all-1, which equals -1.
 @SETSCREEN
-0;JMP
-
-(RESTART)
-
-// Start by explicitly zero-ing out all variables.
-// Then go to the "Main" section.
-
-@SCREENCOLOR
-M=0
-@SCREEN
-D=A
-@SCREENWORD
-M=D
-@MAIN
 0;JMP
